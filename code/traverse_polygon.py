@@ -1,5 +1,6 @@
 import numpy as np
 from shapely.geometry import Polygon, Point
+from numba import jit, njit
 
 """
 输入mask, 布尔矩阵field, bounding box的四个顶点, polygon的顶点list, 
@@ -19,8 +20,43 @@ def traverseMask(mask, block_size, field, x_min, y_min, x_max, y_max, polygon):
     for i in range(mask.shape[0]):
         for j in range(mask.shape[1]):
             if mask[i, j]:
-                block_start = [x_min + i * block_size, y_min + j * block_size]
+                block_start = [x_min + i * block_size[0], y_min + j * block_size[1]]
                 field = traverseBlock(block_start, block_size, polygon, field, x_min, y_min, x_max, y_max)
+
+    return field
+
+
+@jit(nopython=True, parallel=True)
+def traverseBlock(block_start, block_size, polygon, field, x_min, y_min, x_max, y_max):
+    # 找到start点
+    cursor = findStartPointJit(block_start, block_size, polygon)
+    if cursor is None:
+        return field
+    # 从start点开始遍历
+    # 首先向右遍历
+    shouldStop = False
+    step = 1
+    colStartInPolygon = True
+    while not shouldStop:
+        if colStartInPolygon:
+            if not isPointInPolygonJit((cursor[1], cursor[0]), polygon) \
+                    or cursor[0] < x_min \
+                    or cursor[0] > x_max:
+                step = -step
+                cursor[1] += 1
+                if cursor[1] > y_max:
+                    shouldStop = True
+                colStartInPolygon = False
+            else:
+                field[cursor[1], cursor[0]] = True
+                cursor[0] += step
+        else:
+            if not isPointInPolygonJit((cursor[1], cursor[0]), polygon):
+                cursor[0] += step
+                if cursor[0] < x_min or cursor[0] > x_max:
+                    shouldStop = True
+            else:
+                colStartInPolygon = True
 
     return field
 
@@ -54,28 +90,6 @@ def traverseSingle(start, polygon, field, x_min, y_min, x_max, y_max):
     return field
 
 
-def traverseBlock(block_start, block_size, polygon, field, x_min, y_min, x_max, y_max):
-    # 找到start点
-    cursor = findStartPoint(block_start, block_size, polygon)
-    # 从start点开始遍历
-    # 首先向右遍历
-    shouldStop = False
-    step = 1
-    field[cursor[0], cursor[1]] = True
-    while not shouldStop:
-        if not isPointInPolygon((cursor[1], cursor[0]), polygon) \
-                or cursor[0] < x_min \
-                or cursor[0] > x_max:
-            step = -step
-            cursor[1] += 1
-            if cursor[1] > y_max:
-                shouldStop = True
-        else:
-            field[cursor[0], cursor[1]] = True
-            cursor[0] += step
-    return field
-
-
 def findStartPoint(block_start, block_size, polygon):
     # 找到polygon中离block_start最近的点
     # 优先判断离上方最近, 其次是离左侧最近
@@ -85,7 +99,36 @@ def findStartPoint(block_start, block_size, polygon):
                 return [block_start[0] + j, block_start[1] + i]
 
 
+@jit(nopython=True)
+def findStartPointJit(block_start, block_size, polygon):
+    # 找到polygon中离block_start最近的点
+    # 优先判断离上方最近, 其次是离左侧最近
+    for i in range(block_size[0]):
+        for j in range(block_size[1]):
+            if isPointInPolygonJit((block_start[1] + i, block_start[0] + j), polygon):
+                return [block_start[0] + j, block_start[1] + i]
+
+
 def isPointInPolygon(point, polygon):
     # 使用shapely的方法判断点是否在polygon内
     polygon = Polygon(polygon)
     return polygon.contains(Point(point[1], point[0]))
+
+
+@njit
+def isPointInPolygonJit(point, polygon):
+    y, x = point
+    n = len(polygon)
+    inside = False
+    p1x, p1y = polygon[0]
+    for i in range(n + 1):
+        p2x, p2y = polygon[i % n]
+        if y > min(p1y, p2y):
+            if y <= max(p1y, p2y):
+                if x <= max(p1x, p2x):
+                    if p1y != p2y:
+                        xinters = (y - p1y) * (p2x - p1x) / (p2y - p1y) + p1x
+                    if p1x == p2x or x <= xinters:
+                        inside = not inside
+        p1x, p1y = p2x, p2y
+    return inside

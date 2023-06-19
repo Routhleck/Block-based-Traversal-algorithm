@@ -7,7 +7,7 @@ def initMaskFromBoundingBox(x_min, x_max, y_min, y_max, block_size):
     """
     Initialize a mask from a bounding box.
     """
-    mask = np.zeros((int((x_max - x_min) / block_size), int((y_max - y_min) / block_size)))
+    mask = np.zeros((int((x_max - x_min) / block_size[0]), int((y_max - y_min) / block_size[1])), dtype=np.bool_)
     return mask
 
 
@@ -20,12 +20,12 @@ def calculateMaskFromPolygon(x_min, x_max, y_min, y_max, block_size, polygon):
     """
     for i in range(mask.shape[0]):
         for j in range(mask.shape[1]):
-            x1 = x_min + i * block_size
-            y1 = y_min + j * block_size
-            x2 = x1 + block_size
-            y2 = y1 + block_size
+            x1 = x_min + i * block_size[0]
+            y1 = y_min + j * block_size[1]
+            x2 = x1 + block_size[0]
+            y2 = y1 + block_size[1]
             if isRectangleInPolygon(x1, y1, x2, y2, polygon):
-                mask[i, j] = 1
+                mask[i, j] = True
     return mask
 
 

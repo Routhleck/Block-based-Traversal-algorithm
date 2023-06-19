@@ -85,5 +85,4 @@ def rasterization_traversal_block(polygonList, field_size, block_size=(32, 32)):
                              boundingBoxes[boundingBox_index][1],
                              boundingBoxes[boundingBox_index][3],
                              polygon)
-
     return field
