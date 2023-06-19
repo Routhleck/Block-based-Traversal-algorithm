@@ -11,6 +11,9 @@ polygonList = np.array([[[100, 500], [400, 400], [500, 250]],
                         [[100, 100], [400, 200], [500, 50]],]
                        )
 
+# field_size = (20, 20)
+# polygonList = np.array([[[0, 0], [20, 0], [0, 20]],])
+
 polygonList = initPolygonList_custom(polygonList)
 
 drawPolygons(polygonList)

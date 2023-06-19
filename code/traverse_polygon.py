@@ -29,17 +29,28 @@ def traverseSingle(start, polygon, field, x_min, y_min, x_max, y_max):
     cursor = findStartPoint(start, field.shape, polygon)
     step = 1
     shouldStop = False
+    colStartInPolygon = True
     while not shouldStop:
-        if not isPointInPolygon((cursor[1], cursor[0]), polygon) \
-                or cursor[0] < x_min \
-                or cursor[0] > x_max:
-            step = -step
-            cursor[1] += 1
-            if cursor[1] > y_max:
-                shouldStop = True
+        if colStartInPolygon:
+            if not isPointInPolygon((cursor[1], cursor[0]), polygon) \
+                    or cursor[0] < x_min \
+                    or cursor[0] > x_max:
+                step = -step
+                cursor[1] += 1
+                if cursor[1] > y_max:
+                    shouldStop = True
+                colStartInPolygon = False
+            else:
+                field[cursor[1], cursor[0]] = True
+                cursor[0] += step
         else:
-            field[cursor[0], cursor[1]] = True
-            cursor[0] += step
+            if not isPointInPolygon((cursor[1], cursor[0]), polygon):
+                cursor[0] += step
+                if cursor[0] < x_min or cursor[0] > x_max:
+                    shouldStop = True
+            else:
+                colStartInPolygon = True
+
     return field
 
 
