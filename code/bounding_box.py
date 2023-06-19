@@ -11,6 +11,7 @@ def generateBoundingBoxes(polygonList):
         boundingBoxes.append(generateBoundingBox(polygon))
     return boundingBoxes
 
+
 # 根据一个多边形的顶点list初始化bounding box
 def generateBoundingBox(polygon):
     """
