@@ -1,7 +1,7 @@
 from block_calculation import calculateMaskFromPolygon
 from bounding_box import generateBoundingBoxes
 from initializer import initPolygonFromVertexes, initRandomPolygon
-from traverse_polygon import traverseMask, traverseSingle, isPointInPolygon
+from traverse_polygon import traverseMask, traverseSingle, isPointInPolygon, traverseAllblock
 
 import numpy as np
 
@@ -49,13 +49,42 @@ def rasterization_traversal(polygonList, field_size):
     # 遍历每个polygon
     for boundingBox_index, polygon in enumerate(polygonList):
         field = traverseSingle((boundingBoxes[boundingBox_index][0],
-                               boundingBoxes[boundingBox_index][2]),
+                                boundingBoxes[boundingBox_index][2]),
                                polygon,
                                field,
                                boundingBoxes[boundingBox_index][0],
                                boundingBoxes[boundingBox_index][2],
                                boundingBoxes[boundingBox_index][1],
                                boundingBoxes[boundingBox_index][3])
+
+    return field
+
+
+def rasterization_traversal_parallel(polygonList, field_size, block_size):
+    """
+    使用traversal方法遍历
+    """
+    # 初始化field
+    field = np.zeros(field_size, dtype=np.bool_)
+    # 取出每个polygon的bounding box
+    boundingBoxes = generateBoundingBoxes(polygonList)
+
+    # 遍历每个polygon
+    for boundingBox_index, polygon in enumerate(polygonList):
+        mask = calculateMaskFromPolygon(boundingBoxes[boundingBox_index][0],
+                                        boundingBoxes[boundingBox_index][1],
+                                        boundingBoxes[boundingBox_index][2],
+                                        boundingBoxes[boundingBox_index][3],
+                                        block_size,
+                                        polygon)
+        field = traverseAllblock(mask,
+                                 block_size,
+                                 field,
+                                 boundingBoxes[boundingBox_index][0],
+                                 boundingBoxes[boundingBox_index][2],
+                                 boundingBoxes[boundingBox_index][1],
+                                 boundingBoxes[boundingBox_index][3],
+                                 polygon)
 
     return field
 

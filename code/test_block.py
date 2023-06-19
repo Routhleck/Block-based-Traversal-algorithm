@@ -1,7 +1,6 @@
 from rasterization import (rasterization_point,
                            rasterization_bounding_box,
                            rasterization_traversal,
-                           rasterization_traversal_parallel,
                            rasterization_traversal_block)
 from draw import drawBooleanMatrixAndPolygons, drawPolygons
 from initializer import initPolygonList_custom, initPolygonList_random
@@ -9,34 +8,20 @@ import numpy as np
 from time import time
 import pandas as pd
 
-field_sizes = [(600, 600), (1200, 1200), (2400, 2400)]
-polygonLists = [np.array([[[100, 500], [400, 400], [500, 250]],
-                          [[100, 100], [400, 200], [500, 50]], ]
-                         ),
-                np.array([[[200, 1000], [800, 800], [1000, 500]],
-                          [[200, 200], [800, 400], [1000, 100]], ]
-                         ),
-                np.array([[[400, 2000], [1600, 1600], [2000, 1000]],
-                          [[400, 400], [1600, 800], [2000, 200]], ]
-                         )
-                ]
-block_sizes = [(100, 100), (200, 200), (400, 400)]
+field_size = (2400, 2400)
+polygonList = np.array([[[200, 1000], [800, 800], [1000, 500]],
+                        [[200, 200], [800, 400], [1000, 100]], ]
+                       )
 
-df = pd.DataFrame(columns=[
-    'field_size',
-    'block_size',
-    'time_traversal',
-    'time_block_based_traversal',
-])
+block_size = (400, 400)
+
 
 # field_size = (20, 20)
 # polygonList = np.array([[[0, 0], [20, 0], [0, 20]],])
 def testTime(polygonList, field_size, block_size, isDraw=False):
     polygonList = initPolygonList_custom(polygonList)
-    if isDraw:
-        drawPolygons(polygonList)
-
-    print('Field_size = ', field_size, '\t block_size = ', block_size)
+    # if isDraw:
+    #     drawPolygons(polygonList)
 
     # # 1. 常规的rasterization方法, 对每个像素点, 判断是否在polygon内
     # time1 = time()
@@ -49,9 +34,9 @@ def testTime(polygonList, field_size, block_size, isDraw=False):
     # print('bounding_box: ', time() - time2)
 
     # 3. 使用traversal方法遍历
-    field_point_1 = rasterization_traversal_block(polygonList, field_size)
+    print('Field_size = ', field_size, '\t block_size = ', block_size)
     time3 = time()
-    field_point_1 = rasterization_traversal_block(polygonList, field_size)
+    # field_point_1 = rasterization_traversal(polygonList, field_size)
     time3 = time() - time3
     print('traversal: ', time3)
 
@@ -62,15 +47,8 @@ def testTime(polygonList, field_size, block_size, isDraw=False):
     time4 = time() - time4
     print('block-based traversal: ', time4)
     if isDraw:
-        drawBooleanMatrixAndPolygons(field_point_1, polygonList)
+        # drawBooleanMatrixAndPolygons(field_point_1, polygonList)
         drawBooleanMatrixAndPolygons(field_point_2, polygonList)
 
 
-    df.loc[len(df)] = [field_size, block_size, time3, time4]
-
-
-for polygonList, field_size in zip(polygonLists, field_sizes):
-    for block_size in block_sizes:
-        testTime(polygonList, field_size, block_size, isDraw=False)
-
-df.to_csv('test.csv')
+testTime(polygonList, field_size, block_size, True)
