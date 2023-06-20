@@ -124,7 +124,7 @@ An even smarter algorithm is illustrated in Figure 5. This algorithm descends fr
 \end{figure}
 
 \subsection{Block Sparse Algorithm}
-Although the Traversal Algorithm also considers slicing for parallel optimization, it doesn't elaborate on how to select the corresponding slice. Thus, in this paper, the Block-Based Traversal Algorithm is introduced to optimize this process, taking a leaf from OpenAI's Block Sparse Algorithm.
+Although the Traversal Algorithm also considers slicing for parallel optimization, it doesn't elaborate on how to select the corresponding slice. Thus, in this paper, the Block-Based Traversal Algorithm is introduced to optimize this process, following the example of OpenAI's Block Sparse Algorithm.
 
 Figure 6 shows the basic thinking of Block Sparse Algorithm, it enhances computational efficiency by concentrating the computation on blocks of the input matrix with high magnitude. It divides the matrix into several blocks, then based on a certain threshold, only processes the blocks containing significant values while skipping over those with low magnitude.\cite{gray2017}
 
@@ -151,6 +151,7 @@ First, a two-dimensional field (array) is initialized with boolean values, with 
 field = np.zeros(field_size, dtype=np.bool_)
 \end{verbatim}
 
+\subsection{Bounding box generation}
 Next, a list of bounding boxes is generated for all polygons in the input polygon list (\texttt{polygonList}) using the function \texttt{generateBoundingBoxes}. A bounding box is a smallest rectangular box which contains the polygon. The coordinates of the bounding box corners are determined by the minimum and maximum $x$ and $y$ values of the polygon vertices.
 
 \subsection{Block Mask Generation}
@@ -163,18 +164,18 @@ After generating the mask for a polygon, the field is traversed and modified bas
 
 \subsection{Just-in-time Compilation}
 
-To improve the performance of the algorithm, the NumPy and Numba libraries are used, specifically the functions decorated with \texttt{@jit} and \texttt{@njit}. This allows for just-in-time (JIT) compilation of the Python code to machine code, leading to much faster execution times.
+To improve the performance of the algorithm and make the algorithm parallel, the NumPy and Numba libraries are used, specifically the functions decorated with \texttt{@jit} and \texttt{@njit}. This allows for just-in-time (JIT) compilation of the Python code to machine code, leading to much faster execution times.
 
 %------------------------------------------------
 \section{Methodologies}
 
-\subsection{Test Case}
+\subsection{Test Introduction}
 
 The functionality and performance of the rasterization methods were tested on three polygon lists of varying complexity, each with different field sizes. The polygon lists were defined as numpy arrays, each containing a number of 2D arrays, with each 2D array representing a polygon specified by its vertices. The field sizes ranged from 600 x 600 to 2400 x 2400.
 
 Additionally, we evaluated the impact of varying the block size on the performance of the block-based traversal method. The block sizes considered ranged from 25 x 25 to 400 x 400.
 
-For fairer testing, parallel processing is also performed for Traversal Algorithm, both of which are the same method for splitting blocks
+For fairer testing, parallel processing is also performed for Traversal Algorithm, both of which are taking same block size for splitting blocks
 
 \begin{figure}[H] % Single column figure
 	\includegraphics[width=\linewidth]{origin_triangle.png}
