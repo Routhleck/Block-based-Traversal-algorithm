@@ -8,12 +8,12 @@ import numpy as np
 from time import time
 import pandas as pd
 
-field_size = (2400, 2400)
-polygonList = np.array([[[200, 1000], [800, 800], [1000, 500]],
-                        [[200, 200], [800, 400], [1000, 100]], ]
+field_size = (600, 600)
+polygonList = np.array([[[100, 500], [400, 400], [500, 250]],
+                        [[100, 100], [400, 200], [500, 50]], ]
                        )
 
-block_size = (400, 400)
+block_size = (200, 200)
 
 
 # field_size = (20, 20)

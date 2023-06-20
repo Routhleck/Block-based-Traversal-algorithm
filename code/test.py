@@ -10,24 +10,28 @@ from time import time
 import pandas as pd
 
 field_sizes = [(600, 600), (1200, 1200), (2400, 2400)]
-polygonLists = [np.array([[[100, 500], [400, 400], [500, 250]],
-                          [[100, 100], [400, 200], [500, 50]], ]
+polygonLists = [np.array([[[100, 100], [500, 100], [300, 500]],
+                          [[50, 550], [300, 50], [500, 50]],
+                          [[100, 50], [500, 400], [500, 550]]]
                          ),
-                np.array([[[200, 1000], [800, 800], [1000, 500]],
-                          [[200, 200], [800, 400], [1000, 100]], ]
+                np.array([[[200, 200], [1000, 200], [600, 1000]],
+                          [[100, 1100], [600, 100], [1000, 100]],
+                          [[200, 100], [1000, 800], [1000, 1100]]]
                          ),
-                np.array([[[400, 2000], [1600, 1600], [2000, 1000]],
-                          [[400, 400], [1600, 800], [2000, 200]], ]
+                np.array([[[400, 400], [2000, 400], [1200, 2000]],
+                          [[200, 2200], [1200, 200], [2000, 200]],
+                          [[400, 200], [2000, 1600], [2000, 2200]]]
                          )
                 ]
-block_sizes = [(100, 100), (200, 200), (400, 400)]
+block_sizes = [(25, 25), (50, 50), (100, 100), (200, 200), (400, 400)]
 
 df = pd.DataFrame(columns=[
     'field_size',
     'block_size',
-    'time_traversal',
+    'time_traversal_parallel',
     'time_block_based_traversal',
 ])
+
 
 # field_size = (20, 20)
 # polygonList = np.array([[[0, 0], [20, 0], [0, 20]],])
@@ -52,19 +56,20 @@ def testTime(polygonList, field_size, block_size, isDraw=False):
     field_point_1 = rasterization_traversal_block(polygonList, field_size)
     time3 = time()
     field_point_1 = rasterization_traversal_block(polygonList, field_size)
-    time3 = time() - time3
+    # 毫秒取2位小数
+    time3 = round((time() - time3) * 1000, 2)
     print('traversal: ', time3)
 
     # 4. 使用block-based traversal方法遍历, 因为JIT是即时编译所以最好在前面就编译好
     field_point_2 = rasterization_traversal_block(polygonList, field_size, block_size)
     time4 = time()
     field_point_2 = rasterization_traversal_block(polygonList, field_size, block_size)
-    time4 = time() - time4
+    # 毫秒取2位小数
+    time4 = round((time() - time4) * 1000, 2)
     print('block-based traversal: ', time4)
     if isDraw:
         drawBooleanMatrixAndPolygons(field_point_1, polygonList)
         drawBooleanMatrixAndPolygons(field_point_2, polygonList)
-
 
     df.loc[len(df)] = [field_size, block_size, time3, time4]
 
@@ -73,4 +78,4 @@ for polygonList, field_size in zip(polygonLists, field_sizes):
     for block_size in block_sizes:
         testTime(polygonList, field_size, block_size, isDraw=False)
 
-df.to_csv('test.csv')
+df.to_csv('test.csv', index=False)

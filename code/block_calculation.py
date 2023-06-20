@@ -7,7 +7,8 @@ def initMaskFromBoundingBox(x_min, x_max, y_min, y_max, block_size):
     """
     Initialize a mask from a bounding box.
     """
-    mask = np.zeros((int((x_max - x_min) / block_size[0]), int((y_max - y_min) / block_size[1])), dtype=np.bool_)
+    mask = np.zeros((int(np.ceil((x_max - x_min) / block_size[0])),
+                     int(np.ceil((y_max - y_min) / block_size[1]))), dtype=np.bool_)
     return mask
 
 
