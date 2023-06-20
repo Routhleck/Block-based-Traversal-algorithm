@@ -10,13 +10,13 @@ Rasterization is a critical process in the field of computer graphics, transform
 
 The rapid rendering of 3D Z-buffered, linearly interpolated polygons is a foundational problem in computer graphics. This problem is generally comprised of two components: 1) the three-dimensional transformation, projection, and illumination computations of the vertices, and 2) the rasterization of the polygon onto a frame buffer. This paper specifically addresses one facet of the second component, namely, the computation of the polygon's boundaries.
 
-Traditionally, each pixel is considered a point to evaluate its positional relation with the polygon. This is achieved by conducting a cross-product operation on the edges of the polygon, which results in determining the sides of each edge the point lies on. This eventually helps us understand whether a pixel resides within a triangle.
-
 <img src="content.assets/image-20230616205307056.png" alt="image-20230616205307056" style="zoom:50%;" />
+
+Figure 1 shows how it is possible to define a triangle by the union of three edges which are specified by edge functions. It is possible to define more complex polygons by using Boolean combinations of more than three edges. Traditionally, each pixel is considered a point to evaluate its positional relation with the polygon. This is achieved by conducting a cross-product operation on the edges of the polygon, which results in determining the sides of each edge the point lies on. This eventually helps us understand whether a pixel resides within a triangle.
 
 Naturally, enhancing the performance of this algorithm during the rasterization sampling phase is crucial, especially given the significant overhead required to determine the position of each pixel within the triangle. The first significant performance-enhancing strategy was the introduction of the bounding box algorithm.
 
-The bounding box algorithm, simply put, is a method that encapsulates a polygon within a rectangle that is large enough to contain it. By creating a bounding box, unnecessary computations are reduced, as it eliminates the need to perform calculations for pixels outside the box. This results in significant performance savings by localizing the area of interest to the bounding box alone.
+The bounding box algorithm, simply put, is a method that encapsulates a polygon within a rectangle that is large enough to contain it. By creating a bounding box, unnecessary computations are reduced, as it eliminates the need to perform calculations for pixels outside the box. This results in significant performance savings by localizing the bounding box alone.
 
 <img src="content.assets/image-20230616214642419.png" alt="image-20230616214642419" style="zoom:50%;" />
 
@@ -41,3 +41,18 @@ The Block Sparse Algorithm, pioneered by OpenAI, enhances computational efficien
 Applying a similar concept, we calculate whether each block rectangle in the bounding box overlaps with the polygon to determine whether this block should be selected for Traversal Algorithm calculations. The overlap between two polygons can be determined by checking if any edge of each block rectangle intersects with any edge of the target polygon. If they intersect, then the block undeniably overlaps with the polygon.
 
 Therefore, the flow of this algorithm involves determining the bounding box, dividing the bounding box according to the block size, and then generating a block mask Boolean matrix by judging whether each block overlaps. Following this, the Traversal Algorithm is applied in parallel to each bounding box, producing the final sampling results.
+
+# Block-based Traversal Implement
+
+
+
+
+
+
+
+# Conclusion
+
+Like Juan Pineda said:"There are many traversal algorithms possible. The best algorithm will depend on the cost/performance tradeoffs in the implementation." Although there are obvious advantages in time complexity using Block-based Traversal Algorithm, additional memory needs to be consumed to store mask information. Also the algorithm only simulate a simple rasterization which only judge whether pixels are in polygons. 
+
+There are many more steps to rasterization, and this is only one of them; adapting Block-based Traversal algorithms to other steps such as anti-aliasing is a problem that will be considered in the future
+

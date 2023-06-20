@@ -25,11 +25,12 @@ def traverseMask(mask, block_size, field, x_min, y_min, x_max, y_max, polygon):
 
     return field
 
+
 def traverseAllblock(mask, block_size, field, x_min, y_min, x_max, y_max, polygon):
     for i in range(mask.shape[0]):
         for j in range(mask.shape[1]):
-                block_start = [x_min + i * block_size[0], y_min + j * block_size[1]]
-                field = traverseBlock(block_start, block_size, polygon, field, x_min, y_min, x_max, y_max)
+            block_start = [x_min + i * block_size[0], y_min + j * block_size[1]]
+            field = traverseBlock(block_start, block_size, polygon, field, x_min, y_min, x_max, y_max)
 
     return field
 

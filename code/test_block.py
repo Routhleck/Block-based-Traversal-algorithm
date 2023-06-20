@@ -8,9 +8,10 @@ import numpy as np
 from time import time
 import pandas as pd
 
-field_size = (600, 600)
-polygonList = np.array([[[100, 500], [400, 400], [500, 250]],
-                        [[100, 100], [400, 200], [500, 50]], ]
+field_size = (2400, 2400)
+polygonList = np.array([[[400, 400], [2000, 400], [1200, 2000]],
+                        [[200, 2200], [1200, 200], [2000, 200]],
+                        [[400, 200], [2000, 1600], [2000, 2200]]]
                        )
 
 block_size = (200, 200)
@@ -20,8 +21,8 @@ block_size = (200, 200)
 # polygonList = np.array([[[0, 0], [20, 0], [0, 20]],])
 def testTime(polygonList, field_size, block_size, isDraw=False):
     polygonList = initPolygonList_custom(polygonList)
-    # if isDraw:
-    #     drawPolygons(polygonList)
+    if isDraw:
+        drawPolygons(polygonList)
 
     # # 1. 常规的rasterization方法, 对每个像素点, 判断是否在polygon内
     # time1 = time()

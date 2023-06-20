@@ -1,4 +1,4 @@
-field_size,block_size,time_traversal_parallel,time_block_based_traversal
+Field Size,Block Size,The Time Using Traversal Parallel algorithm(ms), time_block_based_traversal(ms)
 "(600, 600)","(25, 25)",152.39,230.28
 "(600, 600)","(50, 50)",154.38,71.05
 "(600, 600)","(100, 100)",154.47,26.0
