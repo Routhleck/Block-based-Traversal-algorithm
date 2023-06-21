@@ -12,11 +12,8 @@ traversal算法: 首先找到polygon在该block中离左上方最近的顶点(�
 在重复上述过程中, 遍历的方向会左右改变, 直到遍历到最后一行的出block边界或者该点不在polygon内
 """
 
-
+# block-based traversal algorithm
 def traverseMask(mask, block_size, field, x_min, y_min, x_max, y_max, polygon):
-    """
-    Traverse a mask and modify a field.
-    """
     for i in range(mask.shape[0]):
         for j in range(mask.shape[1]):
             if mask[i, j]:
@@ -25,7 +22,7 @@ def traverseMask(mask, block_size, field, x_min, y_min, x_max, y_max, polygon):
 
     return field
 
-
+# traversal algorithm parallel version
 def traverseAllblock(mask, block_size, field, x_min, y_min, x_max, y_max, polygon):
     for i in range(mask.shape[0]):
         for j in range(mask.shape[1]):
@@ -69,7 +66,7 @@ def traverseBlock(block_start, block_size, polygon, field, x_min, y_min, x_max, 
 
     return field
 
-
+# traversal algorithm unparallel version
 def traverseSingle(start, polygon, field, x_min, y_min, x_max, y_max):
     cursor = findStartPoint(start, field.shape, polygon)
     step = 1

@@ -32,7 +32,7 @@ def calculateMaskFromPolygon(x_min, x_max, y_min, y_max, block_size, polygon):
 
 def isRectangleInPolygon(x1, y1, x2, y2, polygon):
     """
-    Judge whether a rectangle intersects with a polygon or not.
+    判断矩形是否在多边形内部
     """
     rectangle = Polygon([(x1, y1), (x2, y1), (x2, y2), (x1, y2)])
     return rectangle.intersects(Polygon(polygon))

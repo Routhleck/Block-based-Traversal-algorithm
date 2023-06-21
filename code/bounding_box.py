@@ -4,7 +4,7 @@ import numpy as np
 # 将polygonList的bounding box计算出来，一一对应
 def generateBoundingBoxes(polygonList):
     """
-    Generate bounding boxes from a list of polygons.
+    为一组多边形生成bounding box
     """
     boundingBoxes = []
     for polygon in polygonList:
@@ -15,7 +15,7 @@ def generateBoundingBoxes(polygonList):
 # 根据一个多边形的顶点list初始化bounding box
 def generateBoundingBox(polygon):
     """
-    Generate a bounding box from a polygon.
+    为一个多边形生成bounding box
     """
     x_min = np.min(polygon[:, 0])
     x_max = np.max(polygon[:, 0])
