@@ -203,6 +203,22 @@ The test procedure is as follows:
 
 This test process is repeated for each combination of polygon list, field size, and block size.
 
+\subsection{Test Environment}
+
+The test environment is as follows:
+
+\begin{itemize}
+	\item CPU: Intel(R) Core(TM) i5-12490F CPU @ 3.00GHz
+	\item GPU: NVIDIA GeForce RTX 2070
+	\item RAM: 32GB DDR4 3200MHz
+	\item OS: Windows 10 20H2
+	\item Python version: 3.10.5
+	\item Numba version: 0.55.2
+	\item NumPy version: 1.22.0
+\end{itemize}
+
+%------------------------------------------------
+
 \section{Result}
 
 From the experimental results shown in the table and graph, we can draw some conclusions about the performance of the two algorithms - the Parallel Traversal and Block-based Traversal.
@@ -232,6 +248,12 @@ In summary, the Block-based Traversal algorithm shows clear advantages in effici
 Like Juan Pineda said:"There are many traversal algorithms possible. The best algorithm will depend on the cost/performance tradeoffs in the implementation."\cite{pineda1988} Although there are obvious advantages in time complexity using Block-based Traversal Algorithm, additional memory needs to be consumed to store mask information. Also the algorithm only simulate a simple rasterization which only judge whether pixels are in polygons. 
 
 There are many more steps to rasterization, and this is only one of them; adapting Block-based Traversal algorithms to other steps such as anti-aliasing is a problem that will be considered in the future
+
+In fact, during the initial phase of research, it was challenging to find studies conducted in recent years regarding the rasterization of polygons. This led me to surmise that the problem might have already been solved. I attribute this to two main factors.
+
+Firstly, in the realm of computer graphics, nearly every pixel is essentially contained within certain polygons, making the scene extraordinarily complex. In such a scenario, a straightforward traversal of every point may be more efficient than using block optimization. This is because Block-based Traversal Algorithms require additional computation to determine the relationship between each block and the polygons. Once the number of polygons increases, the supposed benefits might become negligible.
+
+Secondly, the experiment was conducted solely in a CPU-based environment. However, rasterization tasks are typically computed using GPUs. With the rapid advancement of GPUs, the choice of a more efficient algorithm becomes less significant. This is due to the capability of GPUs to parallelize hundreds, if not thousands, of stream processors, reducing computation time to less than 10 milliseconds. Any further optimization would likely benefit imperceptible improvements.
 
 
 %----------------------------------------------------------------------------------------
